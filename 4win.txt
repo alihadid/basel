@@ -1,0 +1,75 @@
+def print_board(board):
+    for row in board:
+        print("|".join(f" {cell} " for cell in row))
+        print("-" * 37)
+    print("  1   2   3   4   5   6   7\n")
+
+
+
+
+
+
+def check_winner(board, player):
+    # Check rows
+    for row in board:
+        for col in range(4):
+            if all(row[col + i] == player for i in range(4)):
+                return True
+
+    # Check columns
+    for col in range(7):
+        for row in range(3):
+            if all(board[row + i][col] == player for i in range(4)):
+                return True
+
+    # Check diagonals
+    for row in range(3):
+        for col in range(4):
+            if all(board[row + i][col + i] == player for i in range(4)):
+                return True
+            if all(board[row + i][col + 3 - i] == player for i in range(4)):
+                return True
+
+    return False
+
+
+def is_full(board):
+    return all(cell != ' ' for row in board for cell in row)
+
+def connect_four():
+    board = [[' ' for _ in range(7)] for _ in range(6)]
+    players = ['X', 'O']
+    turn = 0
+
+    while True:
+        print_board(board)
+        player = players[turn % 2]
+        column = int(input(f"Player {player}, choose a column (1-7): ")) - 1
+
+        # Check if the chosen column is valid
+        if 0 <= column < 7 and board[0][column] == ' ':
+            # Drop the disc in the chosen column
+            for row in range(5, -1, -1):
+                if board[row][column] == ' ':
+                    board[row][column] = player
+                    break
+
+            # Check for a winner
+            if check_winner(board, player):
+                print_board(board)
+                print(f"Player {player} wins!")
+                break
+
+            # Check for a tie
+            if is_full(board):
+                print_board(board)
+                print("It's a tie!")
+                break
+
+            # Switch to the other player's turn
+            turn += 1
+        else:
+            print("Invalid move. Please choose a valid column.")
+
+if __name__ == "__main__":
+    connect_four()
